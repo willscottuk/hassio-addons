@@ -1,6 +1,6 @@
 {
   "name": "SONOS AudioClip + Nabu Casa Cloud TTS",
-  "version": "2.0.3",
+  "version": "3.0.1",
   "slug": "sonos_audioclip_cloud_tts",
   "description": "Implements the Nabu Casa Cloud TTS on SONOS using built in audioClip support, based on the work by kevinvincent.",
   "url": "https://github.com/willscottuk/hassio-addons/tree/master/sonos-audioclip-tts",
