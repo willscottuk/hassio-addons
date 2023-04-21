@@ -43,7 +43,7 @@ options+=(--advertise-tags="${tags}")
 
 # Set accept-dns flag
 accept_dns=$(bashio::config "accept_dns" "true")
-options+=(--accept-dns="${tags}")
+options+=(--accept-dns="${accept_dns}")
 
 # Find interfaces and matching addresses from which we can extract routes to be advertised
 for interface in $(bashio::network.interfaces); do
