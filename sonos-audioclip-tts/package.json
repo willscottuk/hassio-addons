@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "google-tts-api": "0.0.6",
-    "async": "^3.2.0",
+    "async": "^3.2.2",
     "node-fetch": "^2.6.7",
     "node-persist": "^3.0.1",
     "simple-oauth2": "^2.2.1"
