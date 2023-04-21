@@ -1,0 +1,91 @@
+#!/command/with-contenv bashio
+# shellcheck shell=bash
+# ==============================================================================
+# Home Assistant Community Add-on: Tailscale
+# Runs after the machine has been logged in into the Tailscale network
+# ==============================================================================
+declare -a addresses=()
+declare -a options
+declare -a routes=()
+declare ipinfo
+declare login_server
+declare tags
+declare accept_dns
+
+function appendarray() {
+  local -n array=${1}
+  readarray -t -O "${#array[@]}" array
+}
+
+# Default options
+options+=(--accept-routes)
+options+=(--hostname "$(bashio::info.hostname)")
+
+# Advertise as exit node by default when not set, or when explicitly enabled
+if ! bashio::config.has_value "advertise_exit_node" || \
+  bashio::config.true "advertise_exit_node";
+then
+  options+=(--advertise-exit-node)
+else
+  options+=(--advertise-exit-node=false)
+fi
+
+# Get configured control server
+if bashio::config.has_value "login_server";
+then
+  login_server=$(bashio::config "login_server")
+  options+=(--login-server="${login_server}")
+fi
+
+# Get configured tags
+tags=$(bashio::config "tags//[] | join(\",\")" "")
+options+=(--advertise-tags="${tags}")
+
+# Set accept-dns flag
+accept_dns=$(bashio::config "accept_dns" "true")
+options+=(--accept-dns="${tags}")
+
+# Find interfaces and matching addresses from which we can extract routes to be advertised
+for interface in $(bashio::network.interfaces); do
+  appendarray addresses < <(bashio::network.ipv4_address "${interface}")
+  appendarray addresses < <(bashio::network.ipv6_address "${interface}")
+done
+
+# Extract routes to be advertised
+for address in "${addresses[@]}"; do
+  if bashio::var.has_value "${address}"; then
+    # Skip local link addresses
+    if [[ "${address:0:6}" == "fe80::" ]] || [[ "${address:0:8}" == "169.254." ]];
+    then
+      continue
+    fi
+
+    # Skip if forwarding for the address family is disabled
+    if [[ "${address}" =~ .*:.* ]];
+    then
+      [[ $(</proc/sys/net/ipv6/conf/all/forwarding) -eq 0 ]] && continue
+    else
+      [[ $(</proc/sys/net/ipv4/ip_forward) -eq 0 ]] && continue
+    fi
+
+    ipinfo="$(/usr/bin/ipcalc --json "${address}")"
+    routes+=("$(bashio::jq "${ipinfo}" '.NETWORK + "/" + .PREFIX')")
+  fi
+done
+
+# Remove duplicate entries
+readarray -t routes < <(printf "%s\n" "${routes[@]}" | sort -u)
+
+IFS=","
+options+=(--advertise-routes="${routes[*]}")
+unset IFS
+
+# Wait for the network to be available and logged in
+while ! bashio::fs.socket_exists "/var/run/tailscale/tailscaled.sock" || \
+  ! /opt/tailscale status --json --peers=false --self=false \
+    | jq --exit-status '.BackendState == "Running" or .BackendState == "NeedsLogin"' > /dev/null;
+do
+  sleep 2
+done
+
+/opt/tailscale up "${options[@]}"
