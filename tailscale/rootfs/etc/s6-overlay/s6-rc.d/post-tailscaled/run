@@ -37,6 +37,13 @@ then
   options+=(--login-server="${login_server}")
 fi
 
+# Get configured auth key
+if bashio::config.has_value "auth_key";
+then
+  login_server=$(bashio::config "auth_key")
+  options+=(--auth-key="${auth_key}")
+fi
+
 # Get configured tags
 tags=$(bashio::config "tags//[] | join(\",\")" "")
 options+=(--advertise-tags="${tags}")
