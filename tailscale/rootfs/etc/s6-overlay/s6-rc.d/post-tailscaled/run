@@ -41,7 +41,7 @@ fi
 # Get configured auth key
 if bashio::config.has_value "auth_key";
 then
-  login_server=$(bashio::config "auth_key")
+  auth_key=$(bashio::config "auth_key")
   options+=(--auth-key="${auth_key}")
 fi
 
