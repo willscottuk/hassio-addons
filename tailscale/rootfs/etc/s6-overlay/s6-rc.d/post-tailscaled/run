@@ -9,6 +9,7 @@ declare -a options
 declare -a routes=()
 declare ipinfo
 declare login_server
+declare auth_key
 declare tags
 declare accept_dns
 
