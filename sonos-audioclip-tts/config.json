@@ -13,14 +13,14 @@
     "SONOS_CLIENT_SECRET": "",
     "GOOGLE_TTS_LANGUAGE": "en-GB",
     "CLOUD_TTS_LANGUAGE": "en-GB",
-    "CLOUD_TTS_GENDER": "male"
+    "CLOUD_TTS_VOICE": "RyanNeural"
   },
   "schema": {
     "SONOS_CLIENT_ID": "str",
     "SONOS_CLIENT_SECRET": "str",
     "GOOGLE_TTS_LANGUAGE": "str",
     "CLOUD_TTS_LANGUAGE": "str",
-    "CLOUD_TTS_GENDER": "str"
+    "CLOUD_TTS_VOICE": "str"
   },
   "ports": {
     "8349/tcp": 8349
