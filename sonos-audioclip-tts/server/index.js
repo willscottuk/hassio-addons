@@ -360,7 +360,7 @@ app.get("/api/speakHass", async (req, res) => {
   let ttsbody = {
     platform: "cloud",
     language: config.CLOUD_TTS_LANGUAGE,
-    options: { gender: config.CLOUD_TTS_GENDER },
+    options: { voice: config.CLOUD_TTS_VOICE },
     message: text,
   }
 
@@ -470,7 +470,7 @@ app.get("/api/speakHassAll", async (req, res) => {
   let ttsbody = {
     platform: "cloud",
     language: config.CLOUD_TTS_LANGUAGE,
-    options: { gender: config.CLOUD_TTS_GENDER },
+    options: { voice: config.CLOUD_TTS_VOICE },
     message: text,
   }
 
