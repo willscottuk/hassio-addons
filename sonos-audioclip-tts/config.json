@@ -5,8 +5,7 @@
   "description": "Implements the Nabu Casa Cloud TTS on SONOS using built in audioClip support, based on the work by kevinvincent.",
   "url": "https://github.com/willscottuk/hassio-addons/tree/master/sonos-audioclip-tts",
   "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
-  "startup": "before",
-  "boot": "auto",
+  "init":"false",
   "homeassistant_api": true,
   "options": {
     "SONOS_CLIENT_ID": "",
